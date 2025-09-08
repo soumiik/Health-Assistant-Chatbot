@@ -1,0 +1,295 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messages[0].text.body }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        16
+      ],
+      "id": "8f96b5f6-d2cc-4acc-aa67-6b01d501fc45",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "contextWindowLength": 1
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        432
+      ],
+      "id": "467031fb-0d4c-4f59-82c0-8c2357e7d296",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -208,
+        416
+      ],
+      "id": "af293984-3491-49ec-b313-2ca73734e424",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "OcPQntZnKqhfudPW",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        16
+      ],
+      "id": "92848674-ea68-4e55-8c26-a964ddd3764a",
+      "name": "WhatsApp Trigger",
+      "webhookId": "03784616-b798-4846-8239-784d6d409464",
+      "notesInFlow": false,
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "zg4c0pEr9rG34fxK",
+          "name": "WhatsApp OAuth account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "715144148358419",
+        "recipientPhoneNumber": "+91 9749907824",
+        "textBody": "={{ $json.output[0] }} {{ $json.output[1] }} {{ $json.output[2] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        16
+      ],
+      "id": "7364cb5a-4155-48e6-8c72-6a449308d0f8",
+      "name": "Send message",
+      "webhookId": "6ddbb623-a4dd-4e75-a0c2-9e5cb46bcdbc",
+      "notesInFlow": false,
+      "credentials": {
+        "whatsAppApi": {
+          "id": "zvtuR2h0yG2BuaUZ",
+          "name": "WhatsApp account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "=You are a friendly, professional health assistant. For each user message: 1) parse intent (e.g., symptom_check, book_appointment, general_info, emergency) and extract entities (symptom, symptom_duration, severity_level, age, allergies, pre_existing_conditions, preferred_date_time); 2) check stored user context (use user_name, age, location if available) and personalize responses; 3) run triage rules — if emergency signs appear (e.g., chest pain, severe breathlessness, unconsciousness, severe bleeding), immediately tell the user to seek emergency care and offer to connect to a human; 4) for non-emergencies, either ask one clarifying question to fill missing slots or provide concise advice based on trusted sources and suggest follow-up actions (teleconsult, local clinic, self-care tips); 5) never provide definitive medical diagnoses, always include a brief disclaimer (“I’m not a doctor; this isn’t a substitute for professional care”); 6) when booking, confirm preferred date/time and contact method and save appointment details; 7) log the interaction and set fallback_flag if uncertain, then offer human support. Keep replies short (1–4 sentences), empathetic, and actionable.\n\nSafety & tone rules (brief):\n\nTone: calm, empathetic, plain language.\n\nDon’t give prescription advice or definitive diagnoses.\n\nEscalate clearly for emergencies.\n\nRespect privacy: never ask for unnecessary sensitive details; store health data securely.\n\n\nPlaceholders / variables your tool should support:\n{{user_name}}, {{age}}, {{location}}, {{symptom}}, {{symptom_duration}}, {{severity_level}}, {{allergies}}, {{pre_existing_conditions}}, {{preferred_date_time}}, {{conversation_id}}, {{fallback_flag}}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        432
+      ],
+      "id": "727f6eb7-bda4-4bea-90fb-a53857cb6608",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+      "typeVersion": 1,
+      "position": [
+        800,
+        304
+      ],
+      "id": "c085370a-3096-4da6-bc0d-db24a4d824b6",
+      "name": "Auto-fixing Output Parser"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        784,
+        528
+      ],
+      "id": "4664d240-6f0d-4f53-8eae-969837a296d2",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "K89FFdIRiMzVeYE2",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserItemList",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        528
+      ],
+      "id": "0b646f07-a14c-40fe-b5ec-e5c840b305f8",
+      "name": "Item List Output Parser",
+      "notesInFlow": true,
+      "notes": "HEALTH ADVICE"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        16,
+        416
+      ],
+      "id": "5b9d02c3-1422-4baf-a0c7-b646ce1f6f66",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "K89FFdIRiMzVeYE2",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto-fixing Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item List Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Auto-fixing Output Parser",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "82883c87-f354-4d77-8906-56fe6a916c85",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "02139b35eb3da58adc7e1235dd6c36c112f84cf4a30419aebc3d8e5b6cca413c"
+  },
+  "id": "sRPwUD0OZDDUvGlo",
+  "tags": []
+}
