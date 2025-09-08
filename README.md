@@ -11,10 +11,10 @@ To give Rural and Semi urban people a Health Assistant which gave them a short u
 (Extras: alternate/supplementary LLMs like Google Gemini / OpenAI, and an internal “Think” tool used by the agent for multi-step reasoning.)
 
 # Credits
-Soumik Duary (Team Leader)
-Rohit Kumar Das
-Akshya Pratap Singh
-Shashank Kumar
-Muskan Kumari
+Soumik Duary (Team Leader),
+Rohit Kumar Das,
+Akshya Pratap Singh,
+Shashank Kumar,
+Muskan Kumari,
 Satyam Kumar Singh
 
